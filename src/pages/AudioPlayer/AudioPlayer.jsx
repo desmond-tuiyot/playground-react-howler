@@ -6,39 +6,85 @@ import IconButton from "@material-ui/core/IconButton";
 import Replay5OutlinedIcon from "@material-ui/icons/Replay5Outlined";
 import Forward5OutlinedIcon from "@material-ui/icons/Forward5Outlined";
 import PlayArrowOutlinedIcon from "@material-ui/icons/PlayArrowOutlined";
-// import PauseCircleOutlineOutlinedIcon from "@material-ui/icons/PauseCircleOutlineOutlined";
+import PauseCircleOutlineOutlinedIcon from "@material-ui/icons/PauseCircleOutlineOutlined";
 import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
 import VolumeUpOutlinedIcon from "@material-ui/icons/VolumeUpOutlined";
 // import VolumeOffOutlinedIcon from '@material-ui/icons/VolumeOffOutlined';
 // import VolumeDownOutlinedIcon from '@material-ui/icons/VolumeDownOutlined';
 // import VolumeMuteOutlinedIcon from '@material-ui/icons/VolumeMuteOutlined';
+import { useAudioPlayer } from "react-use-audio-player";
+import { useAudioPosition } from "react-use-audio-player";
+
+import fraud from "../../assets/slashy-show.mp3";
+
+const formatTime = (duration) => {
+  let seconds = Math.floor(duration % 60);
+  let minutes = Math.floor(duration / 60);
+  minutes = minutes > 9 ? minutes : `0${minutes}`;
+
+  return `${minutes}:${seconds}`;
+};
 
 const AudioPlayer = () => {
+  const { togglePlayPause, ready, loading, playing } = useAudioPlayer({
+    src: fraud,
+    format: "mp3",
+    autoplay: false,
+    onend: () => console.log("playback ended"),
+    preload: true,
+  });
+  const { position, duration, seek } = useAudioPosition({
+    highRefreshRate: true,
+  });
+
+  if (!ready && !loading) return <div>No audio to play</div>;
+  if (loading) return <div>Loading audio</div>;
+
   return (
     <Grid container spacing={0} direction="column">
       <Grid item>
-        <Slider value={0} onChange={() => {}} aria-label="progress bar" />
+        <Slider
+          value={position}
+          onChange={(_, newValue) => seek(newValue)}
+          min={0}
+          max={duration}
+          aria-label="progress bar"
+        />
       </Grid>
       <Grid item container spacing={0}>
         <Grid item xs container justify="flex-start">
           <Typography variant="body2">
             <span role="current-time" aria-label="current time">
-              00:00
+              {formatTime(position)}
             </span>
             /
             <span role="duration" aria-label="duration">
-              20:00
+              {formatTime(duration)}
             </span>
           </Typography>
         </Grid>
         <Grid item xs container justify="center">
-          <IconButton aria-label="replay">
+          <IconButton
+            aria-label="replay"
+            onClick={() => {
+              seek(position < 5 ? 0 : position - 5);
+            }}
+          >
             <Replay5OutlinedIcon />
           </IconButton>
-          <IconButton aria-label="play">
-            <PlayArrowOutlinedIcon />
+          <IconButton aria-label="play" onClick={togglePlayPause}>
+            {playing ? (
+              <PauseCircleOutlineOutlinedIcon />
+            ) : (
+              <PlayArrowOutlinedIcon />
+            )}
           </IconButton>
-          <IconButton aria-label="forward">
+          <IconButton
+            aria-label="forward"
+            onClick={() => {
+              seek(position + 5 > duration ? duration : position + 5);
+            }}
+          >
             <Forward5OutlinedIcon />
           </IconButton>
         </Grid>
