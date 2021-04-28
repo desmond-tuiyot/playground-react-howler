@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Grid from "@material-ui/core/Grid";
 
 import { useAudioPlayer } from "react-use-audio-player";
@@ -24,9 +24,6 @@ const AudioPlayer = () => {
   });
 
   const [currentVolume, muteVolume, setVolume] = useVolumeAndMute(volume);
-
-  //   const [currentVolume, setCurrentVolume] = useState(volume() || 0.5);
-  //   const [volumeBeforeMute, setVolumeBeforeMute] = useState(volume());
 
   if (!ready && !loading) return <div>No audio to play</div>;
   if (loading) return <div>Loading audio</div>;
