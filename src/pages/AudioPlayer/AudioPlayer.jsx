@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import Slider from "@material-ui/core/Slider";
 import Typography from "@material-ui/core/Typography";
@@ -26,7 +26,14 @@ const formatTime = (duration) => {
 };
 
 const AudioPlayer = () => {
-  const { togglePlayPause, ready, loading, playing } = useAudioPlayer({
+  const {
+    togglePlayPause,
+    ready,
+    loading,
+    playing,
+    mute,
+    volume,
+  } = useAudioPlayer({
     src: fraud,
     format: "mp3",
     autoplay: false,
@@ -36,6 +43,9 @@ const AudioPlayer = () => {
   const { position, duration, seek } = useAudioPosition({
     highRefreshRate: true,
   });
+
+  const [currentVolume, setCurrentVolume] = useState(volume() || 0.5);
+  const [volumeBeforeMute, setVolumeBeforeMute] = useState(volume());
 
   if (!ready && !loading) return <div>No audio to play</div>;
   if (loading) return <div>Loading audio</div>;
@@ -89,12 +99,37 @@ const AudioPlayer = () => {
           </IconButton>
         </Grid>
         <Grid item xs container justify="flex-end">
-          <IconButton aria-label="more settings">
-            <SettingsOutlinedIcon />
-          </IconButton>
-          <IconButton aria-label="volume">
-            <VolumeUpOutlinedIcon />
-          </IconButton>
+          <Grid item xs={2} container alignItems="center">
+            <IconButton
+              aria-label="volume"
+              onClick={() => {
+                if (volume() > 0) {
+                  setVolumeBeforeMute(volume());
+                  volume(0);
+                  setCurrentVolume(0);
+                } else {
+                  setCurrentVolume(volumeBeforeMute);
+                  volume(volumeBeforeMute);
+                }
+              }}
+            >
+              <VolumeUpOutlinedIcon />
+            </IconButton>
+          </Grid>
+          <Grid item xs={3} container alignItems="center">
+            <Slider
+              value={currentVolume}
+              onChange={(_, newValue) => {
+                console.log("here");
+                volume(newValue);
+                setCurrentVolume(newValue);
+              }}
+              min={0}
+              step={0.001}
+              max={1}
+              aria-label="volume slider"
+            />
+          </Grid>
         </Grid>
       </Grid>
     </Grid>
