@@ -1,9 +1,10 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
+import Container from "@material-ui/core/Container";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 import { useAudioPlayer } from "react-use-audio-player";
 import { useAudioPosition } from "react-use-audio-player";
-
 import PlaySeek from "../../components/PlaySeek";
 import ProgressBar from "../../components/ProgressBar";
 import Time from "../../components/Time";
@@ -25,36 +26,54 @@ const AudioPlayer = () => {
 
   const [currentVolume, muteVolume, setVolume] = useVolumeAndMute(volume);
 
-  if (!ready && !loading) return <div>No audio to play</div>;
-  if (loading) return <div>Loading audio</div>;
+  // if (!ready && !loading) return <div>No audio to play</div>;
+  // if (loading) return <div>Loading audio</div>;
 
   return (
-    <Grid container spacing={0} direction="column">
-      <Grid item>
-        <ProgressBar position={position} duration={duration} seek={seek} />
+    <Container maxWidth="sm">
+      <Grid container spacing={0} direction="column">
+        <Grid item>
+          {loading ? (
+            <Skeleton variant="rect" />
+          ) : (
+            <ProgressBar position={position} duration={duration} seek={seek} />
+          )}
+        </Grid>
+        <Grid item container spacing={0} alignItems="center">
+          <Grid item xs container justify="flex-start">
+            {loading ? (
+              <Skeleton variant="rect" width={20} />
+            ) : (
+              <Time position={position} duration={duration} />
+            )}
+          </Grid>
+          <Grid item xs container justify="center">
+            {loading ? (
+              <Skeleton />
+            ) : (
+              <PlaySeek
+                seek={seek}
+                position={position}
+                duration={duration}
+                togglePlayPause={togglePlayPause}
+                playing={playing}
+              />
+            )}
+          </Grid>
+          <Grid item xs>
+            {loading ? (
+              <Skeleton />
+            ) : (
+              <Volume
+                currentVolume={currentVolume}
+                muteVolume={muteVolume}
+                setVolume={setVolume}
+              />
+            )}
+          </Grid>
+        </Grid>
       </Grid>
-      <Grid item container spacing={0}>
-        <Grid item xs container justify="flex-start">
-          <Time position={position} duration={duration} />
-        </Grid>
-        <Grid item xs container justify="center">
-          <PlaySeek
-            seek={seek}
-            position={position}
-            duration={duration}
-            togglePlayPause={togglePlayPause}
-            playing={playing}
-          />
-        </Grid>
-        <Grid item xs>
-          <Volume
-            currentVolume={currentVolume}
-            muteVolume={muteVolume}
-            setVolume={setVolume}
-          />
-        </Grid>
-      </Grid>
-    </Grid>
+    </Container>
   );
 };
 

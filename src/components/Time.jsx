@@ -7,12 +7,11 @@ import { formatTime } from "../utils";
 
 function Time({ position, duration }) {
   return (
-    // eslint-disable-next-line jsx-a11y/aria-role
     <Typography variant="body2">
       <span role="current-time" aria-label="current time">
         {formatTime(position)}
       </span>
-
+      {" / "}
       <span role="duration" aria-label="duration">
         {formatTime(duration)}
       </span>
