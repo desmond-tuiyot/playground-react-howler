@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
+import Button from "@material-ui/core/Button";
 import Skeleton from "@material-ui/lab/Skeleton";
 
 import { useAudioPlayer } from "react-use-audio-player";
@@ -9,12 +10,15 @@ import PlaySeek from "../../components/PlaySeek";
 import ProgressBar from "../../components/ProgressBar";
 import Time from "../../components/Time";
 import Volume from "../../components/Volume";
-import fraud from "../../assets/slashy-show.mp3";
+import fraud from "../../assets/fraud.mp3";
+import omoshiroi from "../../assets/omoshiroi.mp3";
+import slashy from "../../assets/slashy-show.mp3";
 import useVolumeAndMute from "./hooks/useVolumeAndMute";
 
 const AudioPlayer = () => {
+  const [src, setSrc] = useState(fraud);
   const { togglePlayPause, ready, loading, playing, volume } = useAudioPlayer({
-    src: fraud,
+    src,
     format: "mp3",
     autoplay: false,
     onend: () => console.log("playback ended"),
@@ -70,6 +74,27 @@ const AudioPlayer = () => {
                 setVolume={setVolume}
               />
             )}
+          </Grid>
+        </Grid>
+        <Grid item container spacing={1} justify="center">
+          <Grid item>
+            <Button variant="outlined" fullWidth onClick={() => setSrc(fraud)}>
+              Play Fraud
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              variant="outlined"
+              fullWidth
+              onClick={() => setSrc(omoshiroi)}
+            >
+              Play Omoshiroi
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button variant="outlined" fullWidth onClick={() => setSrc(slashy)}>
+              Play The Slashy Show
+            </Button>
           </Grid>
         </Grid>
       </Grid>
